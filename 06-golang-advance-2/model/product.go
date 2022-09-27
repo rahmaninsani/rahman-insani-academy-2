@@ -27,6 +27,22 @@ func (model *ProductModel) FindAll() ([]*Product, error) {
 	return listData, nil
 }
 
+func (model *ProductModel) FindOne(product *Product) (Product, error) {
+	productId := -1
+
+	for index, val := range listData {
+		if val.ID == product.ID {
+			productId = index
+		}
+	}
+
+	if productId == -1 {
+		return Product{}, errors.New("no data found")
+	}
+
+	return *listData[productId], nil
+}
+
 func (model *ProductModel) Insert(newProduct *Product) (Product, error) {
 	if len(listData) == 0 {
 		newProduct.ID = helper.GenerateID(0)

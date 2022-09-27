@@ -30,6 +30,37 @@ func (controller *ProductController) GetProducts() echo.HandlerFunc {
 	}
 }
 
+func (controller *ProductController) GetProduct() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var input model.Product
+
+		stringId := c.Param("id")
+		intId, _ := strconv.Atoi(stringId)
+
+		if err := c.Bind(&input); err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"code":    http.StatusBadRequest,
+				"message": "error when parsing data",
+			})
+		}
+		input.ID = intId
+
+		res, err := controller.Model.FindOne(&input)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
+				"code":    http.StatusInternalServerError,
+				"message": err.Error(),
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"code":    http.StatusOK,
+			"message": "success get one product",
+			"data":    ToProductResponse(res),
+		})
+	}
+}
+
 func (controller *ProductController) Create() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var newProduct model.Product
