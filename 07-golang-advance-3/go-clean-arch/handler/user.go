@@ -41,6 +41,13 @@ func (handler UserHandler) GetAllUser(c echo.Context) error {
 		return err
 	}
 
+	if users == nil {
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"code":    http.StatusNotFound,
+			"message": "data not found",
+		})
+	}
+
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"code":    http.StatusOK,
 		"message": "success get all user",
@@ -55,6 +62,13 @@ func (handler UserHandler) GetUserById(c echo.Context) error {
 	user, err := handler.userUseCase.GetUserById(intId)
 	if err != nil {
 		return err
+	}
+
+	if user.ID == 0 {
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"code":    http.StatusNotFound,
+			"message": "user not found",
+		})
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
